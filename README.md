@@ -22,7 +22,6 @@ It allows users to write, edit, auto-save drafts, and publish blog posts — all
 |------------|----------------|-------------|
 | ![Login](https://raw.githubusercontent.com/bit-milind42/Blog-Editor/refs/heads/main/Login.png) | ![Homepage](https://raw.githubusercontent.com/bit-milind42/Blog-Editor/refs/heads/main/Home.png) | ![Editor](https://raw.githubusercontent.com/bit-milind42/Blog-Editor/refs/heads/main/Blogs.png) |
 
-> You can add your own screenshots by placing them in a `/screenshots` folder in your repo.
 
 ---
 
@@ -69,9 +68,6 @@ npm install
 npm run dev
 
 ```
-
-### 🎥 Demo Video
-📺 Watch Demo on YouTube
 
 ### 🧑‍💻 Author
 Made with ❤️ by Milind
