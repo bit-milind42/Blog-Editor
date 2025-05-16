@@ -1,0 +1,81 @@
+# 📝 Blog Editor Application
+
+A modern, full-stack blog editor built with **React**, **Tailwind CSS**, **Node.js**, **Express**, and **MongoDB**.  
+It allows users to write, edit, auto-save drafts, and publish blog posts — all within a clean, responsive UI and protected authentication system using **JWT**.
+
+---
+
+## ✨ Features
+
+- 🖊️ Create, edit, and auto-save blog drafts (5-second delay)
+- 🔐 Secure authentication (signup/login/logout) using JWT
+- ✉️ Auto-detect & group **draft** and **published** blogs
+- 🔁 Edit & delete blog posts with confirmation
+- 🔒 Protected routes and token-based access control
+- 💡 Responsive, minimalist UI using Tailwind CSS
+
+---
+
+## 📸 Screenshots
+
+| Login Form | Blog Dashboard | Blog Editor |
+|------------|----------------|-------------|
+| ![Login](https://raw.githubusercontent.com/bit-milind42/Blog-Editor/refs/heads/main/Login.png) | ![Homepage](https://raw.githubusercontent.com/bit-milind42/Blog-Editor/refs/heads/main/Home.png) | ![Editor](https://raw.githubusercontent.com/bit-milind42/Blog-Editor/refs/heads/main/Blogs.png) |
+
+> You can add your own screenshots by placing them in a `/screenshots` folder in your repo.
+
+---
+
+## 🧱 Tech Stack
+
+| Frontend            | Backend             | Database     | Authentication |
+|---------------------|---------------------|--------------|----------------|
+| React (Vite)        | Node.js (Express)   | MongoDB      | JWT, bcrypt.js |
+| Tailwind CSS        | Mongoose            |              |                |
+
+---
+
+## 🚀 Getting Started (Local Setup)
+
+### ✅ Prerequisites
+
+- Node.js and npm installed  
+- MongoDB running locally or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+
+---
+
+### ⚙️ Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/bit-milind42/Blog-Editor.git
+cd Blog-Editor
+
+🔧 Backend Setup
+
+cd backend
+npm install
+
+# Create a .env file in backend/ with:
+# MONGO_URI=your_mongodb_uri
+# PORT=5000
+# JWT_SECRET=your_secret_key
+
+npm start
+
+💻 Frontend Setup
+cd blog-editor
+npm install
+npm run dev
+
+```
+
+### 🎥 Demo Video
+📺 Watch Demo on YouTube
+
+### 🧑‍💻 Author
+Made with ❤️ by Milind
+
+### 📄 License
+This project is licensed under the MIT License.
+Feel free to use, fork, or enhance it as needed.
