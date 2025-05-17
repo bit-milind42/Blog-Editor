@@ -7,12 +7,20 @@ It allows users to write, edit, auto-save drafts, and publish blog posts — all
 
 ## ✨ Features
 
-- 🖊️ Create, edit, and auto-save blog drafts (5-second delay)
+- 🖊️ Create, edit, and auto-save blog drafts 
 - 🔐 Secure authentication (signup/login/logout) using JWT
 - ✉️ Auto-detect & group **draft** and **published** blogs
 - 🔁 Edit & delete blog posts with confirmation
 - 🔒 Protected routes and token-based access control
 - 💡 Responsive, minimalist UI using Tailwind CSS
+
+---
+
+## 🎥 Demo Video
+
+📺 [Watch the Project Demo on YouTube](https://www.youtube.com/watch?v=Hz4FJSDe1iw)
+
+This short video walks through the key features of the Blog Editor app, including login, auto-saving drafts, publishing blogs, and protecting routes with JWT.
 
 ---
 
