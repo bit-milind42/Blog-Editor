@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'sdfghjkljhgfdsdfghjkljhgfdghjkdgfhjkl';
+const JWT_SECRET = process.env.JWT_SECRET || 'Enter_Your_Secret_Key';
 
 /**
  * Registers a new user.
