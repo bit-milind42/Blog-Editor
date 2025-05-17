@@ -7,6 +7,7 @@ export default function BlogView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch blog data when the component mounts or the id changes
   useEffect(() => {
     if (!id) return;
     
@@ -30,7 +31,7 @@ export default function BlogView() {
   if (error) return <div className="text-center p-4 text-red-500">Error: {error}</div>;
   if (!blog) return <div className="text-center p-4">Blog not found</div>;
 
-  // Format the date
+  // Format the creation date for display
   const formattedDate = new Date(blog.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -51,6 +52,7 @@ export default function BlogView() {
           <div className="text-gray-600 mb-2">
             Published: {formattedDate}
           </div>
+          {/* Render tags if available */}
           {blog.tags && blog.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {blog.tags.map((tag, index) => (
@@ -63,7 +65,7 @@ export default function BlogView() {
         </header>
 
         <div className="prose max-w-none">
-          {/* Split content by line breaks and render paragraphs */}
+          {/* Render each paragraph of content, preserving line breaks */}
           {blog.content.split('\n').map((paragraph, index) => (
             paragraph.trim() ? <p key={index} className="mb-4">{paragraph}</p> : <br key={index} />
           ))}

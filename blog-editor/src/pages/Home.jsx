@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 
+/**
+ * Home page component for Blog Editor.
+ * Displays hero section, feature highlights, and footer.
+ */
 export default function Home() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="max-w-4xl w-full text-gray-800 space-y-12 py-16">
         
-        {/* Hero Section */}
+        {/* Hero section with app title, description, and navigation buttons */}
         <div className="text-center space-y-4">
           <h1 className="text-5xl font-extrabold tracking-tight">
             Welcome to <span className="text-blue-600">Blog Editor</span> 📝
@@ -29,7 +33,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Features Section */}
+        {/* Features section highlighting key functionalities */}
         <div className="grid md:grid-cols-3 gap-8 text-center mt-12">
           <div className="p-6 border rounded-lg shadow-sm hover:shadow-lg transition">
             <h3 className="text-xl font-semibold text-blue-700">Auto-Save</h3>
@@ -51,7 +55,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer with copyright */}
         <footer className="pt-12 text-center text-sm text-gray-500">
           © {new Date().getFullYear()} Blog Editor. Built with ❤️ by Milind.
         </footer>

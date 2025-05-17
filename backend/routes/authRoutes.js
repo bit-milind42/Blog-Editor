@@ -7,9 +7,9 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'sdfghjkljhgfdsdfghjkljhgfdghjkdgfhjkl';
 
 /**
- * Register a new user
- * @route POST /api/auth/register
- * @access Public
+ * Registers a new user.
+ * Expects: { username, password } in request body.
+ * Returns: 201 with userId on success, 400/500 on error.
  */
 router.post('/register', async (req, res) => {
   try {
@@ -46,9 +46,9 @@ router.post('/register', async (req, res) => {
 });
 
 /**
- * Login user and return JWT token
- * @route POST /api/auth/login
- * @access Public
+ * Authenticates a user and returns a JWT token.
+ * Expects: { username, password } in request body.
+ * Returns: 200 with token and userId on success, 401/500 on error.
  */
 router.post('/login', async (req, res) => {
   try {

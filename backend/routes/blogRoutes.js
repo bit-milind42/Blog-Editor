@@ -4,61 +4,70 @@ import { verifyToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * Save or update a blog draft
- * @route POST /api/blogs/save-draft
- * @access Private
- */
+// Save or update a blog draft (Private)
 router.post('/save-draft', verifyToken, async (req, res) => {
   try {
-    const { title, content, tags } = req.body;
-    
+    const { id, title, content, tags } = req.body;
     if (!title || !content) {
       return res.status(400).json({ message: "Title and content are required" });
     }
 
-    const existing = await Blog.findOne({ title, status: 'draft' });
-
-    if (existing) {
-      existing.content = content;
-      existing.tags = tags?.split(',').filter(Boolean);
-      await existing.save();
-      return res.status(200).json({ message: "Draft updated" });
+    let blog;
+    if (id) {
+      blog = await Blog.findById(id);
+      if (blog) {
+        blog.title = title;
+        blog.content = content;
+        blog.tags = Array.isArray(tags) ? tags : tags?.split(',').filter(Boolean);
+        blog.status = 'draft';
+        await blog.save();
+        return res.status(200).json({ message: "Draft updated", blog });
+      }
     }
 
-    const blog = new Blog({
+    // Create new draft if no ID or not found
+    blog = new Blog({
       title,
       content,
-      tags: tags?.split(',').filter(Boolean),
+      tags: Array.isArray(tags) ? tags : tags?.split(',').filter(Boolean),
       status: 'draft'
     });
-    
     await blog.save();
-    res.status(201).json({ message: "Draft saved" });
+    res.status(201).json({ message: "Draft saved", blog });
   } catch (error) {
     console.error("Save draft error:", error);
     res.status(500).json({ message: "Failed to save draft", error: error.message });
   }
 });
 
-/**
- * Publish a blog post
- * @route POST /api/blogs/publish
- * @access Private
- */
+// Publish a blog post (Private)
 router.post('/publish', verifyToken, async (req, res) => {
   try {
-    const { title, content, tags } = req.body;
-
+    const { id, title, content, tags } = req.body;
     if (!title || !content) {
       return res.status(400).json({ message: "Title and content are required" });
     }
 
-    const blog = await Blog.findOneAndUpdate(
+    let blog;
+    if (id) {
+      blog = await Blog.findById(id);
+      if (blog) {
+        blog.title = title;
+        blog.content = content;
+        blog.tags = Array.isArray(tags) ? tags : tags?.split(',').filter(Boolean);
+        blog.status = 'published';
+        blog.publishedAt = new Date();
+        await blog.save();
+        return res.status(200).json({ message: "Blog published", blog });
+      }
+    }
+
+    // Upsert blog by title if no ID or not found
+    blog = await Blog.findOneAndUpdate(
       { title },
       {
         content,
-        tags: tags?.split(',').filter(Boolean),
+        tags: Array.isArray(tags) ? tags : tags?.split(',').filter(Boolean),
         status: 'published',
         publishedAt: new Date()
       },
@@ -72,11 +81,20 @@ router.post('/publish', verifyToken, async (req, res) => {
   }
 });
 
-/**
- * Get all published blogs
- * @route GET /api/blogs
- * @access Public
- */
+// Get all blogs (including drafts) for authenticated users (Private)
+router.get('/all', verifyToken, async (req, res) => {
+  try {
+    const blogs = await Blog.find()
+      .sort({ updatedAt: -1, publishedAt: -1 })
+      .select('-__v');
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error("Get all blogs error:", error);
+    res.status(500).json({ message: "Failed to fetch blogs", error: error.message });
+  }
+});
+
+// Get all published blogs (Public)
 router.get('/', async (req, res) => {
   try {
     const blogs = await Blog.find({ status: 'published' })
@@ -89,11 +107,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * Get a blog by ID
- * @route GET /api/blogs/:id
- * @access Public
- */
+// Get a blog by ID (Public)
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -115,11 +129,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-/**
- * Delete a blog by ID
- * @route DELETE /api/blogs/:id
- * @access Private
- */
+// Delete a blog by ID (Private)
 router.delete('/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;

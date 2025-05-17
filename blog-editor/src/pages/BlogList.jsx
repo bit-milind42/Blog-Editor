@@ -1,75 +1,82 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const API_BASE_URL = "http://localhost:5000/api";
+
+// Returns authentication headers for API requests
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    Authorization: token ? `Bearer ${token}` : "",
+  };
+};
+
 export default function BlogList() {
-  const [drafts, setDrafts] = useState([]);
-  const [published, setPublished] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [authMessage, setAuthMessage] = useState("");
 
+  // Fetch all blogs (published and drafts) on component mount
   useEffect(() => {
     fetchBlogs();
   }, []);
 
-  const fetchBlogs = () => {
+  // Fetches blogs from the API and updates state
+  const fetchBlogs = async () => {
     setLoading(true);
     setError(null);
-    
-    fetch('http://localhost:5000/api/blogs')
-      .then(res => {
-        if (!res.ok) throw new Error(`Failed to fetch blogs: ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        const drafts = data.filter(blog => blog.status === "draft");
-        const published = data.filter(blog => blog.status === "published");
-        setDrafts(drafts);
-        setPublished(published);
-      })
-      .catch(err => {
-        console.error('Fetch error:', err);
-        setError(err.message);
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const deleteBlog = (id) => {
-    if (window.confirm('Are you sure you want to delete this blog?')) {
-      setDeletingId(id); 
-      
-      fetch(`http://localhost:5000/api/blogs/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      })
-        .then(res => {
-          if (!res.ok) {
-            return res.text().then(text => {
-              try {
-                const json = JSON.parse(text);
-                throw new Error(json.message || `Failed with status: ${res.status}`);
-              } catch {
-                throw new Error(`Failed with status: ${res.status}`);
-              }
-            });
-          }
-          return res.text().then(text => text ? JSON.parse(text) : { success: true });
-        })
-        .then(() => {
-          fetchBlogs(); // Refresh after delete
-        })
-        .catch(err => {
-          alert('Failed to delete blog: ' + err.message);
-        })
-        .finally(() => {
-          setDeletingId(null);
-        });
+    try {
+      const response = await fetch(`${API_BASE_URL}/blogs/all`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) throw new Error(`Failed to fetch blogs: ${response.status}`);
+      const blogsData = await response.json();
+      setBlogs(blogsData);
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Deletes a blog by ID and updates local state
+  const deleteBlog = async (id) => {
+    if (window.confirm('Are you sure you want to delete this blog?')) {
+      setDeletingId(id); 
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setAuthMessage("You must be logged in to delete blogs");
+          setTimeout(() => setAuthMessage(""), 3000);
+          return;
+        }
+        const response = await fetch(`${API_BASE_URL}/blogs/${id}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: "Unknown error occurred" }));
+          throw new Error(errorData.message || `Failed with status: ${response.status}`);
+        }
+        setBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== id));
+      } catch (err) {
+        console.error("Delete error:", err);
+        alert('Failed to delete blog: ' + err.message);
+      } finally {
+        setDeletingId(null);
+      }
+    }
+  };
+
+  // Separate blogs by status
+  const publishedBlogs = blogs.filter(blog => blog.status === "published");
+  const draftBlogs = blogs.filter(blog => blog.status === "draft");
+
+  // Renders a list of blog cards
   const renderList = (blogs) =>
     blogs.map(blog => (
       <div
@@ -132,6 +139,12 @@ export default function BlogList() {
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-4xl mx-auto">
+        {authMessage && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
+            <p>{authMessage}</p>
+          </div>
+        )}
+        
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900">📝 All Blogs</h1>
           <Link
@@ -144,12 +157,12 @@ export default function BlogList() {
 
         <section className="mb-12">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Published</h2>
-          {published.length > 0 ? renderList(published) : <p className="text-gray-600">No published blogs yet.</p>}
+          {publishedBlogs.length > 0 ? renderList(publishedBlogs) : <p className="text-gray-600">No published blogs yet.</p>}
         </section>
 
         <section>
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Drafts</h2>
-          {drafts.length > 0 ? renderList(drafts) : <p className="text-gray-600">No drafts yet.</p>}
+          {draftBlogs.length > 0 ? renderList(draftBlogs) : <p className="text-gray-600">No drafts yet.</p>}
         </section>
       </div>
     </div>
