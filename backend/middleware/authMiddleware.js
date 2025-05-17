@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'sdfghjkljhgfdsdfghjkljhgfdghjkdgfhjkl';
+const JWT_SECRET = process.env.JWT_SECRET || 'Enter_Your_Secret_key';
 
 /**
  * Middleware to verify JWT token and attach user ID to the request object.
